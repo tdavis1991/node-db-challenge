@@ -28,7 +28,7 @@ exports.up = async function(knex) {
             .onUpdate('CASCADE')
       table.integer('task_id')
             .references('id')
-            .inTable('task')
+            .inTable('tasks')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
   })
