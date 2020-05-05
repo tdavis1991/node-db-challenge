@@ -41,7 +41,7 @@ router.get('/:id/tasks', async(req, res, next) => {
                 'tasks.description as taskDescription'
             )
 
-        res.json(tasks)
+        res.json([...tasks])
     }catch(err) {
         next(err)
     }
