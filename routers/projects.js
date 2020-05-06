@@ -1,6 +1,8 @@
 const express = require('express')
 const db = require('../data/config')
 const projects = require('../models/projects')
+const task = require('../models/tasks')
+const resource = require('../models/resources')
 
 const router = express.Router()
 
@@ -28,19 +30,39 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
+//get tasks to project
 router.get('/:id/tasks', async(req, res, next) => {
     try {
-        const tasks = await db('project_task as pt')
-            .join('tasks', 'tasks.id', 'pt.task_id')
-            .join('projects', 'projects.id', 'pt.project_id')
-            .where('pt.project_id', req.params.id)
-            .select(
-                'tasks.id',
-                'projects.name as projectName',
-                'tasks.description as taskDescription'
-            )
+        const tasks = await db('tasks')
+        .where('tasks.project_id', req.params.id)
+        .join('projects as p', 'p.id', '=', 'tasks.project_id')
+        .select(
+            'p.id',
+            'p.name as projectName',
+            'p.description as projectDescription',
+            'tasks.description as taskDescription',
+            'tasks.completed as completed'
+        )
 
-        res.json([...tasks])
+        res.json(tasks)
+    }catch(err) {
+        next(err)
+    }
+})
+
+//get resources to project
+router.get('/:id/resources', async(req, res, next) => {
+    try {
+        const resources = await db('resources')
+        .where('resources.project_id', req.params.id)
+        .join('projects as p', 'p.id', '=', ' resources.project_id')
+        .select(
+            'p.id',
+            'p.name as projectName',
+            'resources.name as resourceName'
+        )
+
+        res.json(resources)
     }catch(err) {
         next(err)
     }
@@ -72,6 +94,34 @@ router.put('/:id', async(req, res, next) => {
 
 router.delete('/:id', (req, res, next) => {
 
+})
+
+//add task to project
+router.post('/:id/task', (req, res, next) => {
+    const id = req.params.id
+    const payload = {...req.body, project_id: id}
+
+    
+    task.addTask(payload)
+        .then(task => {
+            res.status(200).json(task)
+        }).catch(err => {
+            next(err)
+        })
+})
+
+//add resource to project
+router.post('/:id/resource', (req, res, next) => {
+    const id = req.params.id
+    const payload = {...req.body, project_id: id}
+
+    
+    resource.addResource(payload)
+        .then(resource => {
+            res.status(200).json(resource)
+        }).catch(err => {
+            next(err)
+        })
 })
 
 module.exports = router;

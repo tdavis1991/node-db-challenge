@@ -1,0 +1,7 @@
+1) SQL is the language that is used to create or alter the RDBMS
+
+2) Tables need primary keys in order to be identified in the DB.
+
+3) The name of that table column would be <table its referencing name>_id
+
+4) In order to have a many to many relationship between two tables, they could each be associated with multiple lines in that table.

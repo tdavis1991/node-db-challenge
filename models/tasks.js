@@ -12,7 +12,8 @@ function findTask(id) {
     .select(
         'tasks.id',
         'projects.name as Project_name',
-        'tasks.description as Task_description'
+        'tasks.description as Task_description',
+        'pt.project_id as projectId'
     )
 }
 

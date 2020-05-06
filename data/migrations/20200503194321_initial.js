@@ -12,12 +12,24 @@ exports.up = async function(knex) {
       table.text('description').notNull()
       table.text('notes')
       table.boolean('completed').default(false)
+      table.integer('project_id')
+            .references('id')
+            .inTable('projects')
+            .onDelete('CASCADE')
+            .onUpdate('CASCADE')
+            .notNull()
   })
 
   await knex.schema.createTable('resources', (table) => {
       table.increments('id')
       table.text('name').notNull()
       table.text('description')
+      table.integer('project_id')
+        .references('id')
+        .inTable('projects')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+        .notNull()
   })
 
   await knex.schema.createTable('project_task', (table) => {
@@ -31,6 +43,7 @@ exports.up = async function(knex) {
             .inTable('tasks')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')
+      table.primary(['project_id', 'task_id'])
   })
 
   await knex.schema.createTable('project_resource', (table) => {
@@ -44,6 +57,7 @@ exports.up = async function(knex) {
           .inTable('resources')
           .onDelete('CASCADE')
           .onUpdate('CASCADE')
+    table.primary(['project_id', 'resource_id'])
     })
 };
 
